@@ -72,7 +72,7 @@ export const login = async (page) => {
     if (!loginInput) return;
     console.log('Login...');
 
-    await loginInput.type(process.env.LOGIN, {delay: 15});
+    await loginInput.type(process.env.HH_USERNAME, {delay: 15});
     await waitForTimeout(500);
 
     await page.click('[data-qa="expand-login-by-password-text"]');
@@ -84,7 +84,7 @@ export const login = async (page) => {
         throw new Error('Password input not found');
     }
 
-    await passwordInput.type(process.env.PASSWORD, {delay: 15});
+    await passwordInput.type(process.env.HH_PASSWORD, {delay: 15});
     await waitForTimeout(500);
 
     await page.click('[data-qa="account-login-submit"');
@@ -93,7 +93,7 @@ export const login = async (page) => {
     await waitForTimeout(7500);
 };
 
-export const checkResume = async (page) => {
+export const checkUpdateIsPossible = async (page) => {
     console.log('Page reload', new Date());
     await page.reload({waitUntil: 'domcontentloaded'});
     await waitForTimeout(10000);

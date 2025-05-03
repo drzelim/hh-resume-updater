@@ -1,7 +1,7 @@
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import puppeteer from "puppeteer-extra";
 import {executablePath} from "puppeteer";
-import {checkResume, login, setBodyWidth, updateResume, waitForTimeout} from "./utils.js";
+import {checkUpdateIsPossible, login, setBodyWidth, waitForTimeout} from "./utils.js";
 import 'dotenv/config';
 
 const pluginStealth = StealthPlugin();
@@ -10,13 +10,15 @@ puppeteer.use(pluginStealth);
 const TARGET_URL = 'https://hh.ru/applicant/resumes';
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36';
 
+const CHECK_TIME = 1000 * 60 * 60; // 1 hour
+
 const start = async () => {
-    let browser
+    let browser;
     try {
         console.log('Start browser');
 
         browser = await puppeteer.launch({
-            headless: true,
+            headless: process.env.HEADLESS,
             userDataDir: './profiles/hh2',
             defaultViewport: {
                 width: 1366,
@@ -42,11 +44,11 @@ const start = async () => {
 
         await login(page);
 
-        await checkResume(page);
+        await checkUpdateIsPossible(page);
 
         setInterval(async () => {
-            checkResume(page);
-        }, 1000 * 60 * 60);
+            checkUpdateIsPossible(page);
+        }, CHECK_TIME);
 
         // await new Promise(resolve => browser.on('disconnected', resolve));
 
@@ -54,7 +56,7 @@ const start = async () => {
         console.log(err);
         console.log('end error');
         await browser.close();
-        start()
+        start();
     }
 };
 
