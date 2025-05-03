@@ -64,6 +64,8 @@ const start = async () => {
             await new Promise(resolve => browser.on('disconnected', resolve));
         } else {
             await browser.close();
+            console.log('Success');
+            console.log('Browser close');
         }
 
     } catch (err) {

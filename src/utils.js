@@ -95,9 +95,7 @@ export const login = async (page) => {
 
 export const checkUpdateIsPossible = async (page) => {
     try {
-        console.log('Page reload', new Date());
-        await page.reload({waitUntil: 'domcontentloaded'});
-        await waitForTimeout(10000);
+        await waitForTimeout(5000);
         console.log('Check updating...');
         await updateResume(page);
     } catch (e) {
