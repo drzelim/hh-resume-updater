@@ -4,15 +4,20 @@ import {executablePath} from "puppeteer";
 import {checkUpdateIsPossible, login, setBodyWidth, waitForTimeout} from "./utils.js";
 import {CronJob} from 'cron';
 import 'dotenv/config';
+import {createDir} from "./helpers.js";
 
 const pluginStealth = StealthPlugin();
 puppeteer.use(pluginStealth);
-const DEV_MODE = !!process.env.DEV_MODE;
 
+const DEV_MODE = !!process.env.DEV_MODE;
 const TARGET_URL = 'https://hh.ru/applicant/resumes';
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36';
+const PROFILE_DIR = './profiles/hh';
+
+createDir(PROFILE_DIR);
 
 const start = async () => {
+
     let browser;
     try {
         console.log('Start browser');
@@ -27,7 +32,7 @@ const start = async () => {
 
         browser = await puppeteer.launch({
             headless: process.env.HEADLESS,
-            userDataDir: './profiles/hh2',
+            userDataDir: PROFILE_DIR,
             defaultViewport: {
                 width: 1366,
                 height: 768,
@@ -65,9 +70,12 @@ const start = async () => {
     }
 };
 
+const cronExpression = '0 * * * *'; // Every hour
+
 const job =   CronJob.from({
-    cronTime: '0 * * * *',
+    cronTime: cronExpression,
     onTick: function () {
+        console.log(job.nextDate());
         start();
     },
     start: true,

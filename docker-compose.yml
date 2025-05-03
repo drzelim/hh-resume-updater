@@ -6,7 +6,6 @@ services:
     command: npm run start
     restart: always
     volumes:
-      - ./profiles:/app/profiles
       - ./src:/app/src
     ports:
       - "4000:4000"

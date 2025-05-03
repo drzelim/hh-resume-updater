@@ -103,5 +103,4 @@ export const checkUpdateIsPossible = async (page) => {
     } catch (e) {
         console.log('checkUpdateIsPossible error');
     }
-
 };
