@@ -2,20 +2,29 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import puppeteer from "puppeteer-extra";
 import {executablePath} from "puppeteer";
 import {checkUpdateIsPossible, login, setBodyWidth, waitForTimeout} from "./utils.js";
+import {CronJob} from 'cron';
 import 'dotenv/config';
 
 const pluginStealth = StealthPlugin();
 puppeteer.use(pluginStealth);
+const DEV_MODE = !!process.env.DEV_MODE;
 
 const TARGET_URL = 'https://hh.ru/applicant/resumes';
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36';
 
-const CHECK_TIME = 1000 * 60 * 60; // 1 hour
-
 const start = async () => {
     let browser;
+    let job;
     try {
         console.log('Start browser');
+
+        const args = [
+            `--user-agent=${USER_AGENT}`,
+        ];
+
+        if (!DEV_MODE) {
+            args.push('--no-sandbox');
+        }
 
         browser = await puppeteer.launch({
             headless: process.env.HEADLESS,
@@ -25,6 +34,7 @@ const start = async () => {
                 height: 768,
             },
             executablePath: executablePath(),
+            args
         });
 
         const page = await browser.newPage();
@@ -44,11 +54,14 @@ const start = async () => {
 
         await login(page);
 
-        await checkUpdateIsPossible(page);
-
-        setInterval(async () => {
-            checkUpdateIsPossible(page);
-        }, CHECK_TIME);
+        job = CronJob.from({
+            cronTime: '0 * * * *',
+            onTick: function () {
+                checkUpdateIsPossible(page);
+            },
+            start: true,
+            timeZone: 'Europe/Moscow'
+        });
 
         // await new Promise(resolve => browser.on('disconnected', resolve));
 
@@ -56,6 +69,7 @@ const start = async () => {
         console.log(err);
         console.log('end error');
         await browser.close();
+        job?.stop();
         start();
     }
 };
