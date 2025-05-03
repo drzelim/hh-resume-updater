@@ -14,7 +14,6 @@ const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
 
 const start = async () => {
     let browser;
-    let job;
     try {
         console.log('Start browser');
 
@@ -54,25 +53,25 @@ const start = async () => {
 
         await login(page);
 
-        job = CronJob.from({
-            cronTime: '0 * * * *',
-            onTick: function () {
-                checkUpdateIsPossible(page);
-            },
-            start: true,
-            timeZone: 'Europe/Moscow'
-        });
+        await checkUpdateIsPossible(page);
 
+        await browser.close();
         // await new Promise(resolve => browser.on('disconnected', resolve));
 
     } catch (err) {
         console.log(err);
         console.log('end error');
         await browser.close();
-        job?.stop();
-        start();
     }
 };
 
-start();
+const job =   CronJob.from({
+    cronTime: '0 * * * *',
+    onTick: function () {
+        start();
+    },
+    start: true,
+    timeZone: 'Europe/Moscow'
+});
 
+console.log(job.nextDate());
