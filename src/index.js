@@ -60,8 +60,11 @@ const start = async () => {
 
         await checkUpdateIsPossible(page);
 
-        await browser.close();
-        // await new Promise(resolve => browser.on('disconnected', resolve));
+        if (DEV_MODE) {
+            await new Promise(resolve => browser.on('disconnected', resolve));
+        } else {
+            await browser.close();
+        }
 
     } catch (err) {
         console.log(err);
