@@ -2,9 +2,8 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import puppeteer from "puppeteer-extra";
 import {executablePath} from "puppeteer";
 import {checkUpdateIsPossible, login, setBodyWidth, waitForTimeout} from "./utils.js";
-import {CronJob} from 'cron';
 import 'dotenv/config';
-import {createDir} from "./helpers.js";
+import {createDir, startJob} from "./helpers.js";
 
 const pluginStealth = StealthPlugin();
 puppeteer.use(pluginStealth);
@@ -17,7 +16,6 @@ const PROFILE_DIR = './profiles/hh';
 createDir(PROFILE_DIR);
 
 const start = async () => {
-
     let browser;
     try {
         console.log('Start browser');
@@ -75,16 +73,13 @@ const start = async () => {
     }
 };
 
-const cronExpression = '0 * * * *'; // Every hour
+// const cronExpression = '0 * * * *'; // Every hour
+// const job = startJob(cronExpression, start);
 
-const job =   CronJob.from({
-    cronTime: cronExpression,
-    onTick: function () {
-        console.log(job.nextDate());
-        start();
-    },
-    start: true,
-    timeZone: 'Europe/Moscow'
-});
+const TIME = 1000 * 60 * 242; // 4 hour and 2 minutes
 
-console.log(job.nextDate());
+setInterval(() => {
+    start();
+}, TIME)
+
+start();
