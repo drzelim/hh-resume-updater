@@ -3,7 +3,7 @@ import puppeteer from "puppeteer-extra";
 import {executablePath} from "puppeteer";
 import {checkUpdateIsPossible, login, setBodyWidth, waitForTimeout} from "./utils.js";
 import 'dotenv/config';
-import {createDir, startJob} from "./helpers.js";
+import {createDir} from "./helpers.js";
 
 const pluginStealth = StealthPlugin();
 puppeteer.use(pluginStealth);
@@ -73,13 +73,7 @@ const start = async () => {
     }
 };
 
-// const cronExpression = '0 * * * *'; // Every hour
-// const job = startJob(cronExpression, start);
-
 const TIME = 1000 * 60 * 242; // 4 hour and 2 minutes
 
-setInterval(() => {
-    start();
-}, TIME)
-
+setInterval(start, TIME);
 start();
