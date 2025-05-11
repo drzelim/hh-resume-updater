@@ -1,9 +1,9 @@
 version: '3'
 
 services:
-  walker:
+  hh:
     image:  hh-resume-updater:latest
-    command: npm run start
+    command: npm run start-updater
     restart: always
     volumes:
       - ./profiles:/app/profiles

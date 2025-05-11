@@ -1,3 +1,7 @@
+import puppeteer from "puppeteer-extra";
+import {executablePath} from "puppeteer";
+import {DEV_MODE, PROFILE_DIR, USER_AGENT} from "./consts.js";
+
 export const waitForTimeout = async (timeout) => new Promise(r => setTimeout(r, timeout));
 
 export const click = async (page) => {
@@ -101,4 +105,27 @@ export const checkUpdateIsPossible = async (page) => {
     } catch (e) {
         console.log('checkUpdateIsPossible error');
     }
+};
+
+export const startBrowser = async (profileDir = PROFILE_DIR) => {
+    console.log('Start browser');
+
+    const args = [
+        `--user-agent=${USER_AGENT}`,
+    ];
+
+    if (!DEV_MODE) {
+        args.push('--no-sandbox');
+    }
+
+    return await puppeteer.launch({
+        headless: process.env.HEADLESS,
+        userDataDir: profileDir,
+        defaultViewport: {
+            width: 1366,
+            height: 768,
+        },
+        executablePath: executablePath(),
+        args
+    });
 };
