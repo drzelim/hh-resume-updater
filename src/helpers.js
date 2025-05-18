@@ -1,9 +1,9 @@
 import fs from 'fs';
-import {CronJob} from "cron";
+import { CronJob } from 'cron';
 
 export const createDir = (dir) => {
     if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, {recursive: true});
+        fs.mkdirSync(dir, { recursive: true });
     }
 };
 
@@ -15,7 +15,7 @@ export const startJob = (cronExpression, cb) => {
             await cb();
         },
         start: true,
-        timeZone: 'Europe/Moscow'
+        timeZone: 'Europe/Moscow',
     });
 
     return job;

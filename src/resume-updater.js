@@ -1,9 +1,9 @@
 import 'dotenv/config';
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import puppeteer from "puppeteer-extra";
-import {checkUpdateIsPossible, login, setBodyWidth, startBrowser, waitForTimeout} from "./utils.js";
-import {createDir} from "./helpers.js";
-import {DEV_MODE, PROFILE_DIR} from "./consts.js";
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import puppeteer from 'puppeteer-extra';
+import { checkUpdateIsPossible, login, setBodyWidth, startBrowser, waitForTimeout } from './utils.js';
+import { createDir } from './helpers.js';
+import { DEV_MODE, PROFILE_DIR } from './consts.js';
 
 const pluginStealth = StealthPlugin();
 puppeteer.use(pluginStealth);
@@ -19,12 +19,12 @@ const start = async () => {
 
         const page = await browser.newPage();
 
-        await page.goto(TARGET_URL, {waitUntil: "domcontentloaded"});
+        await page.goto(TARGET_URL, { waitUntil: 'domcontentloaded' });
         console.log(`Page ${TARGET_URL} is opened`);
         await setBodyWidth(page);
         await waitForTimeout(3000);
 
-        page.on('framenavigated', frame => {
+        page.on('framenavigated', (frame) => {
             if (frame === page.mainFrame()) {
                 setBodyWidth(frame);
             }
@@ -33,21 +33,20 @@ const start = async () => {
         await login(page);
 
         if (page.url() !== TARGET_URL) {
-           await page.goto(TARGET_URL, {waitUntil: "domcontentloaded"});
+            await page.goto(TARGET_URL, { waitUntil: 'domcontentloaded' });
             console.log(`Page ${TARGET_URL} is opened`);
-            await waitForTimeout(3000); 
+            await waitForTimeout(3000);
         }
 
         await checkUpdateIsPossible(page);
 
         if (DEV_MODE) {
-            await new Promise(resolve => browser.on('disconnected', resolve));
+            await new Promise((resolve) => browser.on('disconnected', resolve));
         } else {
             await browser.close();
             console.log('Success');
             console.log('Browser close');
         }
-
     } catch (err) {
         console.log(err);
         console.log('end error');
