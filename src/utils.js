@@ -1,8 +1,8 @@
-import puppeteer from "puppeteer-extra";
-import {executablePath} from "puppeteer";
-import {DEV_MODE, PROFILE_DIR, USER_AGENT} from "./consts.js";
+import puppeteer from 'puppeteer-extra';
+import { executablePath } from 'puppeteer';
+import { DEV_MODE, PROFILE_DIR, USER_AGENT } from './consts.js';
 
-export const waitForTimeout = async (timeout) => new Promise(r => setTimeout(r, timeout));
+export const waitForTimeout = async (timeout) => new Promise((r) => setTimeout(r, timeout));
 
 export const click = async (page) => {
     const vacanciesButtons = await page.$$('a[data-qa="vacancy-serp__vacancy_response"]');
@@ -10,7 +10,7 @@ export const click = async (page) => {
     for (let button of vacanciesButtons) {
         try {
             await button.click();
-            await page.waitForSelector('.bloko-modal', {timeout: 5000});
+            await page.waitForSelector('.bloko-modal', { timeout: 5000 });
             const target = await page.$('.bloko-modal-footer .bloko-button_kind-primary');
             if (target) {
                 await target.click();
@@ -19,10 +19,9 @@ export const click = async (page) => {
             }
             await waitForTimeout(2000);
 
-            if ((await page.$('.bloko-modal-container'))) {
+            if (await page.$('.bloko-modal-container')) {
                 await page.mouse.click(100, 100);
             }
-
         } catch (err) {
             console.log(err);
         }
@@ -30,13 +29,13 @@ export const click = async (page) => {
 };
 
 export const setBodyWidth = async (page) => {
-// Добавляем стиль
+    // Добавляем стиль
     await page.addStyleTag({
         content: `
               body.my-custom-class {
                 width: unset !important;
               }
-            `
+            `,
     });
 
     // Добавляем класс к body
@@ -82,13 +81,12 @@ export const login = async (page) => {
     if (!loginInput) return;
     console.log('Login...');
 
-
     await loginInput.evaluate((el) => {
         el.value = '';
-        el.dispatchEvent(new Event('input', {bubbles: true}));
+        el.dispatchEvent(new Event('input', { bubbles: true }));
     });
 
-    await loginInput.type(process.env.HH_USERNAME, {delay: 15});
+    await loginInput.type(process.env.HH_USERNAME, { delay: 15 });
     await waitForTimeout(500);
 
     await page.click('[data-qa="expand-login-by-password-text"]');
@@ -100,7 +98,7 @@ export const login = async (page) => {
         throw new Error('Password input not found');
     }
 
-    await passwordInput.type(process.env.HH_PASSWORD, {delay: 15});
+    await passwordInput.type(process.env.HH_PASSWORD, { delay: 15 });
     await waitForTimeout(500);
 
     await page.click('[data-qa="account-login-submit"');
@@ -126,9 +124,7 @@ export const checkUpdateIsPossible = async (page) => {
 export const startBrowser = async (profileDir = PROFILE_DIR) => {
     console.log('Start browser');
 
-    const args = [
-        `--user-agent=${USER_AGENT}`,
-    ];
+    const args = [`--user-agent=${USER_AGENT}`];
 
     if (!DEV_MODE) {
         args.push('--no-sandbox');
@@ -142,6 +138,6 @@ export const startBrowser = async (profileDir = PROFILE_DIR) => {
             height: 768,
         },
         executablePath: executablePath(),
-        args
+        args,
     });
 };
