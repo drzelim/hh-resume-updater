@@ -48,7 +48,13 @@ export const setBodyWidth = async (page) => {
 export const updateResume = async (page) => {
     console.log('Updating resume');
     try {
-        const updateButtons = await page.$x('//button/div/span/span[contains(text(), "Поднять в поиске")]');
+        let updateButtons = await page.$x('//button/div/span/span[contains(text(), "Поднять в поиске")]');
+
+        if (!updateButtons.length) {
+            updateButtons = await page.$$('[data-qa*="resume-update-button_actions"]');
+        }
+
+        console.log('updateButtons length:', updateButtons.length);
 
         if (!updateButtons.length) {
             console.log('Resume update is not available yet', new Date());
@@ -110,7 +116,7 @@ export const login = async (page) => {
 export const checkUpdateIsPossible = async (page) => {
     try {
         await waitForTimeout(5000);
-        console.log('Check updating...');
+        console.log('Check updating...', page.url());
         await updateResume(page);
     } catch (e) {
         console.log('checkUpdateIsPossible error');

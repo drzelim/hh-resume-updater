@@ -1,9 +1,9 @@
+import 'dotenv/config';
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import puppeteer from "puppeteer-extra";
 import {checkUpdateIsPossible, login, setBodyWidth, startBrowser, waitForTimeout} from "./utils.js";
 import {createDir} from "./helpers.js";
 import {DEV_MODE, PROFILE_DIR} from "./consts.js";
-import 'dotenv/config';
 
 const pluginStealth = StealthPlugin();
 puppeteer.use(pluginStealth);
@@ -31,6 +31,12 @@ const start = async () => {
         });
 
         await login(page);
+
+        if (page.url() !== TARGET_URL) {
+           await page.goto(TARGET_URL, {waitUntil: "domcontentloaded"});
+            console.log(`Page ${TARGET_URL} is opened`);
+            await waitForTimeout(3000); 
+        }
 
         await checkUpdateIsPossible(page);
 
