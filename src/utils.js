@@ -76,6 +76,12 @@ export const login = async (page) => {
     if (!loginInput) return;
     console.log('Login...');
 
+
+    await loginInput.evaluate((el) => {
+        el.value = '';
+        el.dispatchEvent(new Event('input', {bubbles: true}));
+    });
+
     await loginInput.type(process.env.HH_USERNAME, {delay: 15});
     await waitForTimeout(500);
 
@@ -92,6 +98,11 @@ export const login = async (page) => {
     await waitForTimeout(500);
 
     await page.click('[data-qa="account-login-submit"');
+
+    if (page.url().includes('/login')) {
+        console.log('Login failed');
+        return;
+    }
 
     console.log('Login successful');
     await waitForTimeout(7500);
@@ -119,7 +130,7 @@ export const startBrowser = async (profileDir = PROFILE_DIR) => {
     }
 
     return await puppeteer.launch({
-        headless: process.env.HEADLESS,
+        headless: !!process.env.HEADLESS,
         userDataDir: profileDir,
         defaultViewport: {
             width: 1366,

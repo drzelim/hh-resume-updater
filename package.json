@@ -1,7 +1,7 @@
 {
     "name": "hh-resume-updater",
-    "version": "1.0.0",
-    "main": "index.js",
+    "version": "1.0.1",
+    "main": "resume-updater.js",
     "type": "module",
     "scripts": {
         "start-updater": "node src/resume-updater.js"
