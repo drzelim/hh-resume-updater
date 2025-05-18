@@ -100,8 +100,7 @@ export const login = async (page) => {
     await page.click('[data-qa="account-login-submit"');
 
     if (page.url().includes('/login')) {
-        console.log('Login failed');
-        return;
+        throw new Error('Login failed');
     }
 
     console.log('Login successful');
